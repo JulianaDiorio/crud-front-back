@@ -27,7 +27,6 @@ class Homepage {
     const months = Math.floor(days / 30);
 
     dateBirth.innerHTML = months + " meses e " + (days % 30) + "dias";
-    console.log(dateBirth);
     avatar.classList.add("avatar");
     avatar.src = data.avatar;
 
