@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres_DB
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - $POSTGRES_PORT:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  crud_users_api:
+    container_name: crudUsers
+    build: .
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - $PORT:$PORT
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: bash -c "yarn migrate && yarn dev"
+
+  front: 
+    container_name: front
+    build: 
+      context: ../front-end
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - 3001:80
+    volumes:
+      - ../front-end:/front
+    
+
